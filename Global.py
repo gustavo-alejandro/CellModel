@@ -33,9 +33,9 @@ cLiF = 0.0               # assumed LiF in bath (wt%)
 bTemp = 963.0            # assumed bath temperature (C)
 
 # Cell design related constants
-Aca = 115348             # geometric cathode area cm2
-nAnode = 20              # number of anodes in cell
-AAnode = 104652          # geometric anode area cm2
+Aca = 115348             # geometric cathode area cm2##original number:115348
+nAnode = 20#20              # number of anodes in cell
+AAnode = 2*104652          # geometric anode area cm2
 A = AAnode/nAnode        # geometric area of single anode cm2
 f = 1.1382               # fanning factor for effective anode area
 Ran = 3.02/1000000       # anode resistance ohms

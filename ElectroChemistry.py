@@ -177,7 +177,8 @@ def BathRes(ACD, db, k_bath):
     # Function to evaluate Bath Resistance via eq A15
     # Note RTA doesn't subtract the bubble thickness layer form this
     # calc, so will exclude it for now
-    R_Bath = (ACD - 0*db)/(k_bath*Glob.f*Glob.AAnode)
+    R_Bath = (ACD - db) / (k_bath * Glob.f * Glob.AAnode)
+    #R_Bath = (ACD - 0*db)/(k_bath*Glob.f*Glob.AAnode)
     return R_Bath
 
 

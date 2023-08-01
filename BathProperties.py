@@ -100,7 +100,7 @@ def Conductivity(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath):
     """
     There is a reference empirical cryolite bath conductivity eq. in ref
     https://doi.org/10.1007/BF02915051
-    All inputs in wt%, temperature in C
+    All inputs in wt%, temperature in C. Conductivity in S/cm
     :param C_Al2O3:
     :param C_AlF3:
     :param C_CaF2:
