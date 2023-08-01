@@ -1,0 +1,14 @@
+# byte-compiled cache excluded 
+__pycache__/
+__pycache__/*.pyc
+DataImport/
+
+# Spyder project settings
+.spyproject
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# virtual environments
+venv/
+venv.bak/
