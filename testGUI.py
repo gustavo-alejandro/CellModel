@@ -18,7 +18,7 @@ ConstVector = [10.3, 7, .3, 0, 963]
 ##Create GUI window
 root = tk.Tk()
 root.title("Aluminium Cell Model")
-
+#root.geometry('800x800')
 # Variables to store the updated values
 C_Al2O3 = tk.DoubleVar(value=StateVector[0])
 C_AlF3 = tk.DoubleVar(value=ConstVector[0])
@@ -268,7 +268,9 @@ def plot_cell_volt():
     # Create a figure and axis for the plot
     # fig = Figure(figsize=(8, 6))
     # ax = fig.add_subplot(111)
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 8), sharex=True)
+    fig, (ax2, ax1) = plt.subplots(2, 1, figsize=(8, 8), sharex=True)
+
+    #plt.subplots_adjust(right=0.6, bottom=0.2)
     # Plot the calculated values against C_Al2O3
     # ax.plot(C_Al2O3_values, Erev_values, label="E_rev")
     # ax.plot(C_Al2O3_values, Esa_values, label="E_sa")
@@ -292,13 +294,13 @@ def plot_cell_volt():
     ax1.plot(C_Al2O3_values, V_ca_values, label="V_ca")
     ax1.plot(C_Al2O3_values, V_an_values, label="V_an")
     ax1.plot(C_Al2O3_values, V_ext_values, label="V_ext")
-    ax1.set_ylabel("Voltage")
+    ax1.set_ylabel("Components of cell voltage [V]")
     ax1.legend()
 
     # Plot the second set of data on the second subplot (ax2)
-    ax2.plot(C_Al2O3_values, V_cell_values, label="V_cell")
+    ax2.plot(C_Al2O3_values, V_cell_values, label="Total cell voltage")
     ax2.set_xlabel("C_Al2O3")
-    ax2.set_ylabel("V_cell")
+    ax2.set_ylabel("Total cell voltage [V]")
     ax2.legend()
     #
     # ax.plot(C_Al2O3_values, V_cell_values, label="V_cell")
@@ -317,29 +319,32 @@ def plot_cell_volt():
 def plot_button_cmd():
     #    # Call the plot_cell_volt function to get the figure
     fig = plot_cell_volt()
+    # Set the size of the Figure
+    #fig.set_size_inches(10, 4)
+    plt.subplots_adjust(right=0.6, bottom=0.2)
 
     # Create a new frame for the plot
-    plot_frame = ttk.LabelFrame(root, text="Plot")
+    plot_frame = ttk.LabelFrame(root, text="Plot", width=300, height=300)
     plot_frame.grid(row=0, column=8, columnspan=2, pady=10)
+    #plot_frame.pack()
 
     # Create a canvas for the plot
     canvas = FigureCanvasTkAgg(fig, master=plot_frame)
     canvas.draw()
-
     # Display the plot in the new frame
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     toolbar = NavigationToolbar2Tk(canvas, plot_frame)
     toolbar.update()
-    canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    #canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 
 
 
 update_button = ttk.Button(root, text="Update Values", command=update_values)
-update_button.grid(row=len(slider_labels), column=0, columnspan=2, pady=10)
+update_button.grid(row=1, column=0, columnspan=4, pady=10)
 
 # Modify the command for the "Plot" button to call the plot_button_cmd function
 plot_button = ttk.Button(root, text="Plot", command=plot_button_cmd)
-plot_button.grid(row=len(slider_labels), column=1, columnspan=2, pady=10)
+plot_button.grid(row=1, column=1, columnspan=5, pady=10)
 
 root.mainloop()
