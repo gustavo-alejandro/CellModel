@@ -5,6 +5,7 @@ import BathProperties as Bath
 import ElectroChemistry as Electro
 import CellVoltage as Volt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -265,8 +266,9 @@ def plot_cell_volt():
         V_cell_values.append(Erev+Esa+Vbub+Eca+Ecc+Vbath+V_ca+V_an+V_ext)
 
     # Create a figure and axis for the plot
-    fig = Figure(figsize=(8, 6))
-    ax = fig.add_subplot(111)
+    # fig = Figure(figsize=(8, 6))
+    # ax = fig.add_subplot(111)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 8), sharex=True)
     # Plot the calculated values against C_Al2O3
     # ax.plot(C_Al2O3_values, Erev_values, label="E_rev")
     # ax.plot(C_Al2O3_values, Esa_values, label="E_sa")
@@ -279,14 +281,37 @@ def plot_cell_volt():
     # ax.plot(C_Al2O3_values, V_an_values, label="V_an")
     # ax.plot(C_Al2O3_values, V_ext_values, label="V_ext")
 
-    ax.plot(C_Al2O3_values, V_cell_values, label="V_cell")
+    # Plot the first set of data on the first subplot (ax1)
+    ax1.plot(C_Al2O3_values, Erev_values, label="E_rev")
+    ax1.plot(C_Al2O3_values, Esa_values, label="E_sa")
+    ax1.plot(C_Al2O3_values, Vbub_values, label="V_bub")
+    ax1.plot(C_Al2O3_values, Eca_values, label="E_ca")
+    ax1.plot(C_Al2O3_values, Ecc_values, label="E_cc")
+    ax1.plot(C_Al2O3_values, Vbath_values, label="V_bath")
+    ax1.plot(C_Al2O3_values, Vbub_values, label="V_bub")
+    ax1.plot(C_Al2O3_values, V_ca_values, label="V_ca")
+    ax1.plot(C_Al2O3_values, V_an_values, label="V_an")
+    ax1.plot(C_Al2O3_values, V_ext_values, label="V_ext")
+    ax1.set_ylabel("Voltage")
+    ax1.legend()
 
+    # Plot the second set of data on the second subplot (ax2)
+    ax2.plot(C_Al2O3_values, V_cell_values, label="V_cell")
+    ax2.set_xlabel("C_Al2O3")
+    ax2.set_ylabel("V_cell")
+    ax2.legend()
+    #
+    # ax.plot(C_Al2O3_values, V_cell_values, label="V_cell")
+    #
+    #
+    #
+    # # Set labels and legend
+    # ax.set_xlabel("C_Al2O3")
+    # ax.set_ylabel("Voltage")
+    # ax.legend()
+    # Adjust spacing between the subplots to avoid overlapping labels
+    plt.tight_layout()
 
-
-    # Set labels and legend
-    ax.set_xlabel("C_Al2O3")
-    ax.set_ylabel("Voltage")
-    ax.legend()
     return fig
 
 def plot_button_cmd():
