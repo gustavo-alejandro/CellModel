@@ -61,6 +61,16 @@ alumina_sat_frame.grid(row=2, column=5, padx=10, pady=10, sticky="w")
 alumina_sat_label = ttk.Label(alumina_sat_frame, text="Sat: ")
 alumina_sat_label.grid(row=0, column=0, padx=5, pady=5)
 
+alumina_activ_frame = ttk.LabelFrame(root, text="Alumina activity")
+alumina_activ_frame.grid(row=3, column=5, padx=10, pady=10, sticky="w")
+alumina_activ_label = ttk.Label(alumina_activ_frame, text="activ: ")
+alumina_activ_label.grid(row=0, column=0, padx=5, pady=5)
+
+bath_cond_frame = ttk.LabelFrame(root, text="bath conductivity")
+bath_cond_frame.grid(row=4, column=5, padx=10, pady=10, sticky="w")
+bath_cond_label = ttk.Label(bath_cond_frame, text="bath cond: ")
+bath_cond_label.grid(row=0, column=0, padx=5, pady=5)
+
 #Cell input frame GUI
 
 cell_frame = ttk.LabelFrame(root, text="Cell input data")
@@ -102,6 +112,16 @@ def update_values():
     #Alumina saturation
     alumina_sat = Bath.AluminaSaturation(StateVector[0], ConstVector[0], ConstVector[1], ConstVector[3], ConstVector[2], ConstVector[4])[0]
     alumina_sat_label.config(text=f"Alumina sat: {alumina_sat:.4f}")
+
+    #Alumina activity
+    alumina_actv = Bath.AluminaActivity(StateVector[0], ConstVector[0], ConstVector[1], ConstVector[3], ConstVector[2], ConstVector[4])[0]
+    alumina_activ_label.config(text=f"Alumina actv: {alumina_actv:.4f}")
+
+    #Bath conductivity
+    bath_cond = Bath.Conductivity(StateVector[0], ConstVector[0], ConstVector[1], ConstVector[3], ConstVector[2],
+                                        ConstVector[4])[0]
+    bath_cond_label.config(text=f"Bath cond: {bath_cond:.4f}")
+
 
     V_cell_label.config(text=f"V_cell: {Vcell_total:.4f}")
 
