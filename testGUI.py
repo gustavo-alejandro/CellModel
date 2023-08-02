@@ -227,26 +227,42 @@ def plot_cell_volt():
         BR = Bath.Ratio(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2)[0]
         Erev=Electro.ReversiblePotential(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath)[0]
         Erev_values.append(Electro.ReversiblePotential(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath)[0])
+
+        Esa=Electro.AnodeSurfOverVolt(C_Al2O3, T_Bath, I_line)[0]
         Esa_values.append(Electro.AnodeSurfOverVolt(C_Al2O3, T_Bath, I_line)[0])
         BCover = Electro.BubbleCoverage(C_Al2O3, BR, I_line)[0]
+
+        Vbub=I_line * Electro.BubbleRes(BCover, Electro.BubbleThickness(I_line),
+                                                      Bath.Conductivity(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath)[
+                                                          0])
         Vbub_values.append(I_line * Electro.BubbleRes(BCover, Electro.BubbleThickness(I_line),
                                                       Bath.Conductivity(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath)[
                                                           0]))
 
+        Eca=Electro.AnodeConcOverVolt(C_Al2O3, T_Bath, I_line)[0]
+
         Eca_values.append(Electro.AnodeConcOverVolt(C_Al2O3, T_Bath, I_line)[0])
+
+        Ecc=Electro.CathodeConcOverVolt(BR, T_Bath, I_line)[0]
         Ecc_values.append(Electro.CathodeConcOverVolt(BR, T_Bath, I_line)[0])
 
         dB = Electro.BubbleThickness(I_line)
         kbath = Bath.Conductivity(C_Al2O3, ConstVector[0], ConstVector[1], ConstVector[3], ConstVector[2],
                                   ConstVector[4])[0]
         Rbath = Electro.BathRes(ACD, dB, kbath)
+
+        Vbath=I_line * Rbath
         Vbath_values.append(I_line * Rbath)
+
+        V_ca=I_line * Glob.Ran
+        V_an = I_line * Glob.Rca
+        V_ext = I_line * Glob.Rext
 
         V_ca_values.append(I_line * Glob.Ran)
         V_an_values.append(I_line * Glob.Rca)
         V_ext_values.append(I_line * Glob.Rext)
 
-        #V_cell_values.append
+        V_cell_values.append(Erev+Esa+Vbub+Eca+Ecc+Vbath+V_ca+V_an+V_ext)
 
     # Create a figure and axis for the plot
     fig = Figure(figsize=(8, 6))
@@ -262,6 +278,8 @@ def plot_cell_volt():
     ax.plot(C_Al2O3_values, V_ca_values, label="V_ca")
     ax.plot(C_Al2O3_values, V_an_values, label="V_an")
     ax.plot(C_Al2O3_values, V_ext_values, label="V_ext")
+
+    ax.plot(C_Al2O3_values, V_cell_values, label="V_cell")
 
 
 
