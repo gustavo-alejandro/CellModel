@@ -11,7 +11,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
-StateVector = [4.2, 0, 2.9]
+StateVector = [2.35, 0, 2.9]
 InputVector = [126000, 0, 0]
 ConstVector = [10.3, 7, .3, 0, 963]
 
@@ -315,9 +315,133 @@ def plot_cell_volt():
 
     return fig
 
+def plot_cell_volt_dynamic():
+
+
+
+    #C_Al2O3_values = np.linspace(1.9, 8, 100)
+    C_AlF3 = ConstVector[0]
+    C_CaF2 = ConstVector[1]
+    C_LiF = ConstVector[3]
+    C_MgF2 = ConstVector[2]
+    T_Bath = ConstVector[4]
+    I_line = InputVector[0]
+    ACD = StateVector[2]
+
+    # Initialize empty lists to store the calculated values
+    Erev_values = []
+    Eca_values = []
+    Esa_values = []
+    Ecc_values = []
+    Vbath_values = []
+    Vbub_values = []
+    V_an_values = []
+    V_ca_values = []
+    V_ext_values = []
+    V_cell_values = []
+    # Define a range of C_Al2O3 values from 2 to 8
+    time = np.linspace(1000, 1500, 501)
+    C_Al2O3_values = []
+    for t in time:
+        C_Al2O3 = 7.5977e-18 * pow(t, 6) - 3.8081e-14 * pow(t, 5) + 7.1245e-11 * pow(t, 4)\
+                  - 6.0775e-08 * pow(t, 3) + 2.2483e-05 * pow(t, 2) - 1.2591e-03 * pow(t, 1) + 7.2423e-01
+        C_Al2O3_values.append(C_Al2O3)
+        BR = Bath.Ratio(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2)[0]
+        Erev=Electro.ReversiblePotential(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath)[0]
+        Erev_values.append(Electro.ReversiblePotential(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath)[0])
+
+        Esa=Electro.AnodeSurfOverVolt(C_Al2O3, T_Bath, I_line)[0]
+        Esa_values.append(Electro.AnodeSurfOverVolt(C_Al2O3, T_Bath, I_line)[0])
+        BCover = Electro.BubbleCoverage(C_Al2O3, BR, I_line)[0]
+
+        Vbub=I_line * Electro.BubbleRes(BCover, Electro.BubbleThickness(I_line),
+                                                      Bath.Conductivity(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath)[
+                                                          0])
+        Vbub_values.append(I_line * Electro.BubbleRes(BCover, Electro.BubbleThickness(I_line),
+                                                      Bath.Conductivity(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath)[
+                                                          0]))
+
+        Eca=Electro.AnodeConcOverVolt(C_Al2O3, T_Bath, I_line)[0]
+
+        Eca_values.append(Electro.AnodeConcOverVolt(C_Al2O3, T_Bath, I_line)[0])
+
+        Ecc=Electro.CathodeConcOverVolt(BR, T_Bath, I_line)[0]
+        Ecc_values.append(Electro.CathodeConcOverVolt(BR, T_Bath, I_line)[0])
+
+        dB = Electro.BubbleThickness(I_line)
+        kbath = Bath.Conductivity(C_Al2O3, ConstVector[0], ConstVector[1], ConstVector[3], ConstVector[2],
+                                  ConstVector[4])[0]
+        Rbath = Electro.BathRes(ACD, dB, kbath)
+
+        Vbath=I_line * Rbath
+        Vbath_values.append(I_line * Rbath)
+
+        V_ca=I_line * Glob.Ran
+        V_an = I_line * Glob.Rca
+        V_ext = I_line * Glob.Rext
+
+        V_ca_values.append(I_line * Glob.Ran)
+        V_an_values.append(I_line * Glob.Rca)
+        V_ext_values.append(I_line * Glob.Rext)
+
+        V_cell_values.append(Erev+Esa+Vbub+Eca+Ecc+Vbath+V_ca+V_an+V_ext)
+
+    # Create a figure and axis for the plot
+    # fig = Figure(figsize=(8, 6))
+    # ax = fig.add_subplot(111)
+    fig, (ax2, ax1) = plt.subplots(2, 1, figsize=(8, 8), sharex=False)
+
+    #plt.subplots_adjust(right=0.6, bottom=0.2)
+    # Plot the calculated values against C_Al2O3
+    # ax.plot(C_Al2O3_values, Erev_values, label="E_rev")
+    # ax.plot(C_Al2O3_values, Esa_values, label="E_sa")
+    # ax.plot(C_Al2O3_values, Vbub_values, label="V_bub")
+    # ax.plot(C_Al2O3_values, Eca_values, label="E_ca")
+    # ax.plot(C_Al2O3_values, Ecc_values, label="E_cc")
+    # ax.plot(C_Al2O3_values, Vbath_values, label="V_bath")
+    # ax.plot(C_Al2O3_values, Vbub_values, label="V_bub")
+    # ax.plot(C_Al2O3_values, V_ca_values, label="V_ca")
+    # ax.plot(C_Al2O3_values, V_an_values, label="V_an")
+    # ax.plot(C_Al2O3_values, V_ext_values, label="V_ext")
+
+    # Plot the first set of data on the first subplot (ax1)
+    ax1.plot(time, Erev_values, label="E_rev")
+    ax1.plot(time, Esa_values, label="E_sa")
+    ax1.plot(time, Eca_values, label="E_ca")
+    ax1.plot(time, Ecc_values, label="E_cc")
+    ax1.plot(time, Vbub_values, label="V_bub")
+    ax1.plot(time, Vbath_values, label="V_bath")
+    #ax1.plot(time, Vbub_values, label="V_bub")
+    ax1.plot(time, V_ca_values, label="V_ca")
+    ax1.plot(time, V_an_values, label="V_an")
+    ax1.plot(time, V_ext_values, label="V_ext")
+    ax1.set_xlabel("time [s]")
+    ax1.set_ylabel("Components of cell voltage [V]")
+    ax1.legend()
+
+    # Plot the second set of data on the second subplot (ax2)
+    ax2.plot(time, V_cell_values, label="Total cell voltage")
+    ax2.set_xlabel("time [s]")
+    ax2.set_ylabel("Total cell voltage [V]")
+    ax2.legend()
+    #
+    # ax.plot(C_Al2O3_values, V_cell_values, label="V_cell")
+    #
+    #
+    #
+    # # Set labels and legend
+    # ax.set_xlabel("C_Al2O3")
+    # ax.set_ylabel("Voltage")
+    # ax.legend()
+    # Adjust spacing between the subplots to avoid overlapping labels
+    plt.tight_layout()
+
+    return fig
+
 def plot_button_cmd():
     #    # Call the plot_cell_volt function to get the figure
-    fig = plot_cell_volt()
+    #fig = plot_cell_volt()
+    fig = plot_cell_volt_dynamic()
     # Set the size of the Figure
     #fig.set_size_inches(10, 4)
     plt.subplots_adjust(right=0.6, bottom=0.2)
