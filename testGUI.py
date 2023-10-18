@@ -42,7 +42,7 @@ bath_comp_frame = ttk.LabelFrame(root, text="Bath comp wt%")
 bath_comp_frame.grid(row=0, column=bath_col, columnspan=1, padx=5, pady=5, sticky="w")
 slider_labels = ['C_Al2O3', 'C_AlF3', 'C_CaF2', 'C_MgF2', 'C_LiF', 'T_Bath']
 slider_vars = [C_Al2O3, C_AlF3, C_CaF2, C_MgF2, C_LiF, T_Bath]
-slider_ranges = [(0, 11), (0, 11), (0, 11), (0, 11), (0, 11), (800, 1000)]
+slider_ranges = [(0, 50), (0, 11), (0, 11), (0, 11), (0, 11), (800, 1000)]
 
 for idx, label in enumerate(slider_labels):
     ttk.Label(bath_comp_frame, text=label, width=10).grid(row=idx, column=0, padx=5, pady=5)
@@ -138,8 +138,6 @@ def update_values():
     ConstVector[4] = T_Bath.get()
     InputVector[0] = I_line.get()
     StateVector[2] = ACD.get()
-
-
 
     #Bath ratio calc to display in GUI
     bath_ratio = Bath.Ratio(StateVector[0], ConstVector[0], ConstVector[1], ConstVector[3], ConstVector[2])[0]
@@ -268,7 +266,7 @@ def plot_cell_volt():
     # Create a figure and axis for the plot
     # fig = Figure(figsize=(8, 6))
     # ax = fig.add_subplot(111)
-    fig, (ax2, ax1) = plt.subplots(2, 1, figsize=(8, 8), sharex=True)
+    fig, (ax2, ax1) = plt.subplots(2, 1, figsize=(8, 8), sharex=False)
 
     #plt.subplots_adjust(right=0.6, bottom=0.2)
     # Plot the calculated values against C_Al2O3
@@ -286,20 +284,21 @@ def plot_cell_volt():
     # Plot the first set of data on the first subplot (ax1)
     ax1.plot(C_Al2O3_values, Erev_values, label="E_rev")
     ax1.plot(C_Al2O3_values, Esa_values, label="E_sa")
-    ax1.plot(C_Al2O3_values, Vbub_values, label="V_bub")
     ax1.plot(C_Al2O3_values, Eca_values, label="E_ca")
     ax1.plot(C_Al2O3_values, Ecc_values, label="E_cc")
-    ax1.plot(C_Al2O3_values, Vbath_values, label="V_bath")
     ax1.plot(C_Al2O3_values, Vbub_values, label="V_bub")
+    ax1.plot(C_Al2O3_values, Vbath_values, label="V_bath")
+    #ax1.plot(C_Al2O3_values, Vbub_values, label="V_bub")
     ax1.plot(C_Al2O3_values, V_ca_values, label="V_ca")
     ax1.plot(C_Al2O3_values, V_an_values, label="V_an")
     ax1.plot(C_Al2O3_values, V_ext_values, label="V_ext")
+    ax1.set_xlabel("Al2O3 %wt.")
     ax1.set_ylabel("Components of cell voltage [V]")
     ax1.legend()
 
     # Plot the second set of data on the second subplot (ax2)
     ax2.plot(C_Al2O3_values, V_cell_values, label="Total cell voltage")
-    ax2.set_xlabel("C_Al2O3")
+    ax2.set_xlabel("Al2O3 %wt.")
     ax2.set_ylabel("Total cell voltage [V]")
     ax2.legend()
     #
