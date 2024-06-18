@@ -5,20 +5,28 @@ import numpy as np
 import pandas as pd
 from sensitivity import SensitivityAnalyzer
 #ElectroChemistry.BubbleThickness(100000)
-I_cell = 126000
-T_bath_step = 20
+
+I_line_min=115000
+I_line_max=115100
+I_line_step=100
+C_Al2O3_min=1
+C_Al2O3_max=6
+C_Al2O3_step=1
+
+I_cell = 115000
+T_bath_step = 40
 Report_structure = {'Cell component': ['Equilibrium potential Ee', 'Anode conc. overvoltage',
                                        'Anode surf. overvoltage', 'Cathode overvoltage', 'Bubbles voltage drop',
-                                       'Bath voltage drop'], 'Min': [0,0,0,0,0,0], 'Max': [0,0,0,0,0,0], 'Range': [0,0,0,0,0,0]}
+                                       'Bath voltage drop'], 'Min': [0,0,0,0,0,0], 'Max': [0,0,0,0,0,0], 'Range': [0,0,0,0,0,0], '% var': [0,0,0,0,0,0]}
 Report = pd.DataFrame(Report_structure)
 #reversible potential sensitivity analysis
 Erev_sensitivity_dict = {
-    'C_Al2O3' : (np.arange(1, 10, 1)).tolist(),
+    'C_Al2O3' : (np.arange(C_Al2O3_min, C_Al2O3_max, C_Al2O3_step)).tolist(),
     'C_AlF3' : (np.arange(0, 12, 1)).tolist(),
     'C_CaF2' : (np.arange(0, 5, 1)).tolist(),
     'C_LiF' : (np.arange(0, 5, 1)).tolist(),
     'C_MgF2' : (np.arange(0, 5, 1)).tolist(),
-    'T_Bath' : (np.arange(900, 1000, T_bath_step)).tolist()
+    'T_Bath' : (np.arange(900, 980, T_bath_step)).tolist()
 }
 Erev_labels = {
     'C_Al2O3' : 'C_Al2O3',
@@ -39,19 +47,20 @@ Erev_min = Erev_min.reset_index(drop=True)
 Erev_max_value = Erev_max['Result'][0][0]
 Erev_min_value = Erev_min['Result'][0][0]
 Erev_range_diff = Erev_max_value - Erev_min_value
-
+Erev_perc_var = (Erev_range_diff/Erev_min_value)*100
 Report.loc[0, 'Min'] = Erev_min_value
 Report.loc[0, 'Max'] = Erev_max_value
 Report.loc[0, 'Range'] = Erev_range_diff
+Report.loc[0, '% var'] = Erev_perc_var
 
 
 Erev_results=pd.concat([Erev_results, Erev_max, Erev_min])
 
 ###Anode concentration overvoltage sensitivity
 Eca_sensitivity_dict = {
-    'C_Al2O3' : (np.arange(1, 10, 1)).tolist(),
-    'T_Bath' : (np.arange(900, 1000, T_bath_step)).tolist(),
-    'I_line' : (np.arange(115000, 135000, 10000)).tolist()
+    'C_Al2O3' : (np.arange(C_Al2O3_min, C_Al2O3_max, C_Al2O3_step)).tolist(),
+    'T_Bath' : (np.arange(900, 980, T_bath_step)).tolist(),
+    'I_line' : (np.arange(I_line_min, I_line_max, I_line_step)).tolist()
 }
 
 Eca_labels = {
@@ -69,18 +78,22 @@ Eca_max = Eca_max.reset_index(drop=True)
 Eca_min = Eca_min.reset_index(drop=True)
 Eca_max_value = Eca_max['Result'][0][0]
 Eca_min_value = Eca_min['Result'][0][0]
+
+
 Eca_range_diff = Eca_max_value - Eca_min_value
+Eca_perc_var = (Eca_range_diff/Eca_min_value)*100
 Report.loc[1, 'Min'] = Eca_min_value
 Report.loc[1, 'Max'] = Eca_max_value
 Report.loc[1, 'Range'] = Eca_range_diff
+Report.loc[1, '% var'] = Eca_perc_var
 Eca_results=pd.concat([Eca_results, Eca_max, Eca_min])
 
 ####
 ###Anode surface overvoltage sensitivity
 Esa_sensitivity_dict = {
-    'C_Al2O3' : (np.arange(1, 10, 1)).tolist(),
-    'T_Bath' : (np.arange(900, 1000, T_bath_step)).tolist(),
-    'I_line' : (np.arange(115000, 135000, 10000)).tolist()
+    'C_Al2O3' : (np.arange(C_Al2O3_min, C_Al2O3_max, C_Al2O3_step)).tolist(),
+    'T_Bath' : (np.arange(900, 980, T_bath_step)).tolist(),
+    'I_line' : (np.arange(I_line_min, I_line_max, I_line_step)).tolist()
 }
 
 Esa_labels = {
@@ -99,9 +112,11 @@ Esa_min = Esa_min.reset_index(drop=True)
 Esa_max_value = Esa_max['Result'][0][0]
 Esa_min_value = Esa_min['Result'][0][0]
 Esa_range_diff = Esa_max_value - Esa_min_value
+Esa_perc_var = (Esa_range_diff/Esa_min_value)*100
 Report.loc[2, 'Min'] = Esa_min_value
 Report.loc[2, 'Max'] = Esa_max_value
 Report.loc[2, 'Range'] = Esa_range_diff
+Report.loc[2, '% var'] = Esa_perc_var
 Esa_results=pd.concat([Esa_results, Esa_max, Esa_min])
 
 
@@ -110,8 +125,8 @@ Esa_results=pd.concat([Esa_results, Esa_max, Esa_min])
 ###Cathode surface overvoltage sensitivity
 Ecc_sensitivity_dict = {
     'Ratio' : (np.arange(0.9, 1.6, 0.1)).tolist(),
-    'T_Bath' : (np.arange(900, 1000, T_bath_step)).tolist(),
-    'I_line' : (np.arange(115000, 135000, 10000)).tolist()
+    'T_Bath' : (np.arange(900, 980, T_bath_step)).tolist(),
+    'I_line' : (np.arange(I_line_min, I_line_max, I_line_step)).tolist()
 }
 
 Ecc_labels = {
@@ -130,19 +145,21 @@ Ecc_min = Ecc_min.reset_index(drop=True)
 Ecc_max_value = Ecc_max['Result'][0][0]
 Ecc_min_value = Ecc_min['Result'][0][0]
 Ecc_range_diff = Ecc_max_value - Ecc_min_value
+Ecc_perc_var = (Ecc_range_diff/Ecc_min_value)*100
 Report.loc[3, 'Min'] = Ecc_min_value
 Report.loc[3, 'Max'] = Ecc_max_value
 Report.loc[3, 'Range'] = Ecc_range_diff
+Report.loc[3, '% var'] = Ecc_perc_var
 Ecc_results=pd.concat([Ecc_results, Ecc_max, Ecc_min])
 #bath conductivity sensitivity analysis
 
 kbath_sensitivity_dict = {
-    'C_Al2O3' : (np.arange(1, 10, 1)).tolist(),
+    'C_Al2O3' : (np.arange(C_Al2O3_min, C_Al2O3_max, C_Al2O3_step)).tolist(),
     'C_AlF3' : (np.arange(0, 12, 1)).tolist(),
     'C_CaF2' : (np.arange(0, 5, 1)).tolist(),
     'C_LiF' : (np.arange(0, 5, 1)).tolist(),
     'C_MgF2' : (np.arange(0, 5, 1)).tolist(),
-    'T_Bath' : (np.arange(900, 1000, T_bath_step)).tolist()
+    'T_Bath' : (np.arange(900, 980, T_bath_step)).tolist()
 }
 kbath_labels = {
     'C_Al2O3' : 'C_Al2O3',
@@ -165,7 +182,7 @@ kbath_plot.show()
 Coverage_sensitivity_dict = {
     'C_Al2O3': (np.arange(1, 10, 1)).tolist(),
     'Ratio': (np.arange(0.9, 1.6, 0.1)).tolist(),
-    'I_line': (np.arange(115000, 135000, 10000)).tolist()
+    'I_line' : (np.arange(I_line_min, I_line_max, I_line_step)).tolist()
 
 }
 Coverage_labels = {
@@ -187,7 +204,7 @@ Coverage_results = pd.concat([Coverage_results, Coverage_max, Coverage_min])
 
 ##bubble thickness sensitivity analysis
 db=[]
-I_line = (np.arange(115000, 135000, 5000)).tolist()
+I_line = (np.arange(I_line_min, I_line_max, I_line_step)).tolist()
 for I_line in I_line:
     db.append(ElectroChemistry.BubbleThickness(I_line))
 db_min=min(db)
@@ -213,7 +230,7 @@ db_max=max(db)
 ##Bubble resistance sensitivity analysis
 R_bub_sensitivity_dict = {
     'Coverage' : (np.arange(0.46e0, 0.9e0, 0.1e0)).tolist(),
-    'db' : (np.arange(0.502e0, 0.504e0, 0.00025e0)).tolist(),
+    'db' : (np.arange(0.502e0, 0.504e0, 0.001e0)).tolist(),
     'k_bath' : (np.arange(1.76e0, 2.92e0, 0.1e0)).tolist()
 }
 R_bub_labels = {
@@ -231,17 +248,18 @@ R_bub_max=R_bub_sa.df[R_bub_sa.df.Result == R_bub_sa.df.Result.max()]
 R_bub_min=R_bub_sa.df[R_bub_sa.df.Result == R_bub_sa.df.Result.min()]
 R_bub_results=pd.concat([R_bub_results, R_bub_max, R_bub_min])
 Vbub_min=min(R_bub_results['Result'].to_numpy())*115000
-Vbub_max=max(R_bub_results['Result'].to_numpy())*135000
+Vbub_max=max(R_bub_results['Result'].to_numpy())*115100
 
 Vbub_range_diff = Vbub_max - Vbub_min
+Vbub_perc_diff = (Vbub_range_diff/Vbub_min)*100
 Report.loc[4, 'Min'] = Vbub_min
 Report.loc[4, 'Max'] = Vbub_max
 Report.loc[4, 'Range'] = Vbub_range_diff
-
+Report.loc[4, '% var'] = Vbub_perc_diff
 ##Bath resistance sensitivity analysis
 Rbath_sensitivity_dict = {
-    'ACD' : (np.arange(2e0, 4e0, 0.2e0)).tolist(),
-    'db' : (np.arange(0.2e0, 2e0, 0.2e0)).tolist(),
+    'ACD' : (np.arange(2e0, 2.1e0, 0.1e0)).tolist(),
+    'db' : (np.arange(0.502e0, 0.504e0, 0.001e0)).tolist(),
     'k_bath' : (np.arange(1.76e0, 2.92e0, 0.1e01)).tolist()
 }
 Rbath_labels = {
@@ -264,9 +282,11 @@ Rbath_results=pd.concat([Rbath_results, Rbath_max, Rbath_min])
 # Rbath_results=Rbath_results.reset_index(drop=True)
 #Vbath=Rbath_results['Result'].to_numpy()*I_cell
 Vbath_min = Rbath_min_value*115000
-Vbath_max = Rbath_max_value*135000
+Vbath_max = Rbath_max_value*115100
 
 Vbath_range_diff = Vbath_max - Vbath_min
+Vbath_perc_diff = (Vbath_range_diff/Vbath_min)*100
 Report.loc[5, 'Min'] = Vbath_min
 Report.loc[5, 'Max'] = Vbath_max
 Report.loc[5, 'Range'] = Vbath_range_diff
+Report.loc[5, '% var'] = Vbath_perc_diff

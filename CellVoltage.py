@@ -20,7 +20,7 @@ def Vcell(StateVector, InputVector, ConstVector):
     Rpath: external resistance ohms
     Rext:
     :param StateVector: List of states where StateVector = [Cd, Cun, D]. Cd is C_Al2O3 or alumina concentration wt%,
-                        Cun is not used so Cun = 0, D is the anoce cathode distance ACD in cm e.g StateVector = [10, 0, 3.0]
+                        Cun is not used so Cun = 0, D is the anode cathode distance ACD in cm e.g StateVector = [10, 0, 3.0]
     :param InputVector: List of inputs where InputVector = [I_line, g, BM], I_line is the cell current in A. g and BM currently not used
                         e.g InputVector = [126000, 0, 0]
     :param ConstVector: List of constraints where ConstVector = [C_AlF3, C_CaF2, C_MgF2, C_LiF, T_bath] C terms are concentrations in wt%, T_bath is

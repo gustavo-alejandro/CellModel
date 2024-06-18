@@ -47,6 +47,7 @@ def ReversiblePotential(C_Al2O3, C_AlF3, C_CaF2, C_LiF, C_MgF2, T_Bath):
     logact = ma.log((1/act**2))
     Erev = E0 + Glob.Rgas*(T_Bath + 273.15)*logact/(12*Glob.Faraday)
     return (Erev, ValidFlag)
+    #return Erev
 
 
 def AnodeCurrentDensity(I_line):
@@ -167,6 +168,10 @@ def BubbleThickness(I_line):
     # All inputs in wt%, temperature in C, current in amps
     # Function to evaluate Bubble Thickness via eq A16 in cm
     icell = AnodeCurrentDensity(I_line)
+    #icell = I_line / Glob.f / Glob.AAnode
+    #f = 1.1382  # fanning factor for effective anode area
+    #AAnode = 2 * 104652  # geometric anode area cm2
+    #icell = I_line / f / AAnode
     db = (0.5517 + icell)/(1 + 2.167*icell)
     return db
 
@@ -177,7 +182,10 @@ def BathRes(ACD, db, k_bath):
     # Function to evaluate Bath Resistance via eq A15
     # Note RTA doesn't subtract the bubble thickness layer form this
     # calc, so will exclude it for now
-    R_Bath = (ACD - db) / (k_bath * Glob.f * Glob.AAnode)
+    f = 1.1382e0  # fanning factor for effective anode area
+    AAnode = 2 * 104652e0  # geometric anode area cm2
+    R_Bath = (ACD - db) / (k_bath * f * AAnode)
+    #R_Bath = (ACD - db) / (k_bath * Glob.f * Glob.AAnode)
     #R_Bath = (ACD - 0*db)/(k_bath*Glob.f*Glob.AAnode)
     return R_Bath
 
@@ -220,9 +228,12 @@ def BubbleRes(Coverage, db, k_bath):
     :param Coverage:
     :param db:
     :param k_bath:
-    :return:
+    :return:R)_
     """
     # inputs in units from previous functions (cm based)
     # Function to evaluate Bubble Resistance via eq A19
-    R_Bub = (db*Coverage)/(k_bath*Glob.f*Glob.AAnode*(1-Coverage))
+    f = 1.1382e0  # fanning factor for effective anode area
+    AAnode = 2 * 104652e0  # geometric anode area cm2
+    #R_Bub = (db*Coverage)/(k_bath*Glob.f*Glob.AAnode*(1-Coverage))
+    R_Bub = (db * Coverage) / (k_bath * f * AAnode * (1 - Coverage))
     return R_Bub
